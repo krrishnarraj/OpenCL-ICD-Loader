@@ -31,6 +31,13 @@ project (OPENCL_ICD_LOADER)
 # in test farms, or in cases where the end-user system configs are known in
 # advance. Use it with discretion.
 option (BUILD_SHARED_LIBS "Build shared libs" ON)
+option (ENABLE_TESTS "Enable testing" ON)
+
+if(BUILD_SHARED_LIBS)
+  set(LIB_TYPE "SHARED")
+else()
+  set(LIB_TYPE "STATIC")
+endif()
 
 set (CMAKE_RUNTIME_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/bin)
 set (CMAKE_LIBRARY_OUTPUT_DIRECTORY ${CMAKE_BINARY_DIR}/lib)
@@ -52,7 +59,7 @@ endif ()
 
 include_directories (${OPENCL_INCLUDE_DIRS})
 
-add_library (OpenCL SHARED ${OPENCL_ICD_LOADER_SOURCES})
+add_library (OpenCL ${LIB_TYPE} ${OPENCL_ICD_LOADER_SOURCES})
 set_target_properties (OpenCL PROPERTIES VERSION "1.2" SOVERSION "1")
 
 if (WIN32)
@@ -67,5 +74,10 @@ endif ()
 
 target_link_libraries (OpenCL ${CMAKE_DL_LIBS})
 
-enable_testing()
-add_subdirectory (test)
+if(ENABLE_TESTS)
+  enable_testing()
+  add_subdirectory (test)
+endif()
+
+install(TARGETS OpenCL DESTINATION lib)
+install(DIRECTORY inc/CL DESTINATION include)
