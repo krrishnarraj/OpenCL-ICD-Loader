@@ -13,3 +13,11 @@ add_executable (icd_loader_test
     test_image_objects.c )
 
 target_link_libraries (icd_loader_test OpenCL IcdLog)
+
+if(NOT BUILD_SHARED_LIBS)
+  if(WIN32)
+    target_link_libraries (icd_loader_test cfgmgr32.lib)
+  else()
+    target_link_libraries (icd_loader_test pthread)
+  endif()
+endif()
